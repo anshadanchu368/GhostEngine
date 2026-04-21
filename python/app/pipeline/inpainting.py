@@ -18,7 +18,7 @@ from app.utils import file_io
 
 logger = logging.getLogger(__name__)
 
-_MODEL_ID = "benjamin-paine/stable-diffusion-v1-5-inpainting"
+_MODEL_ID = "stabilityai/stable-diffusion-2-inpainting"
 _POSITIVE_PROMPT = (
     "ghost mannequin, empty garment, no person, clean product photography"
 )
@@ -27,7 +27,7 @@ _NEGATIVE_PROMPT = (
 )
 _INFERENCE_STEPS = 30
 _GUIDANCE_SCALE = 7.5
-_IMAGE_SIZE = (512, 512)
+_IMAGE_SIZE = (768, 768)
 
 
 class InpaintingError(Exception):
