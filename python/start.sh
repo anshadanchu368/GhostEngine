@@ -12,5 +12,10 @@ else
     cd /app && git clone --branch "$BRANCH" "$REPO_URL" repo && cp -r repo/python/app ./app
 fi
 
+if [ -n "$HF_TOKEN" ]; then
+    echo "Logging into Hugging Face..."
+    python3 -c "from huggingface_hub import login; login(token='$HF_TOKEN')"
+fi
+
 echo "Starting uvicorn..."
 exec python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
