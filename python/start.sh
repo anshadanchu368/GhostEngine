@@ -20,6 +20,12 @@ if [ ! -d "/app/tsr" ]; then
     rm -rf /tmp/triposr
 fi
 
+# Install torchmcubes (requires CUDA headers — must compile on GPU machine, not in CI)
+if ! python3 -c "import torchmcubes" 2>/dev/null; then
+    echo "Installing torchmcubes..."
+    pip3 install git+https://github.com/tatsy/torchmcubes.git
+fi
+
 if [ -n "$HF_TOKEN" ]; then
     echo "Logging into Hugging Face..."
     python3 -c "from huggingface_hub import login; login(token='$HF_TOKEN')"
