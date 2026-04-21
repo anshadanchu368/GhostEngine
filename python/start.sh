@@ -6,8 +6,8 @@ BRANCH=${GITHUB_BRANCH:-"main"}
 
 echo "Pulling latest code from $REPO_URL ($BRANCH)..."
 
-if [ -d "/app/app" ]; then
-    cd /app && git pull origin "$BRANCH"
+if [ -d "/app/repo/.git" ]; then
+    cd /app/repo && git pull origin "$BRANCH" && cp -r python/app /app/app
 else
     cd /app && git clone --branch "$BRANCH" "$REPO_URL" repo && cp -r repo/python/app ./app
 fi
