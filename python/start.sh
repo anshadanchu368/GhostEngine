@@ -12,6 +12,14 @@ else
     cd /app && git clone --branch "$BRANCH" "$REPO_URL" repo && cp -r repo/python/app ./app
 fi
 
+# Install TripoSR module (not pip-installable; clone and copy tsr/ package)
+if [ ! -d "/app/tsr" ]; then
+    echo "Cloning TripoSR..."
+    git clone --depth 1 https://github.com/VAST-AI-Research/TripoSR.git /tmp/triposr
+    cp -r /tmp/triposr/tsr /app/tsr
+    rm -rf /tmp/triposr
+fi
+
 if [ -n "$HF_TOKEN" ]; then
     echo "Logging into Hugging Face..."
     python3 -c "from huggingface_hub import login; login(token='$HF_TOKEN')"
