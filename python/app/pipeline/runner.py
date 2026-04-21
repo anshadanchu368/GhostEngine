@@ -1,4 +1,5 @@
 import logging
+import shutil
 import time
 from pathlib import Path
 
@@ -39,19 +40,27 @@ class PipelineRunner:
 
         elapsed_ms = int((time.monotonic() - start) * 1000)
         logger.info("Pipeline complete", extra={"job_id": job_id, "duration_ms": elapsed_ms})
-        return {
+        result = {
             "job_id": job_id,
             "status": "completed",
             "glb_path": str(glb_path),
             "duration_ms": elapsed_ms,
         }
+        self._cleanup(job_id)
+        return result
 
     def _error_result(self, job_id: str, status: str, exc: Exception, start: float) -> dict:
         elapsed_ms = int((time.monotonic() - start) * 1000)
         logger.error("Pipeline failed | status=%s", status, extra={"job_id": job_id}, exc_info=True)
+        self._cleanup(job_id)
         return {
             "job_id": job_id,
             "status": status,
             "error": str(exc),
             "duration_ms": elapsed_ms,
         }
+
+    def _cleanup(self, job_id: str) -> None:
+        job_dir = Path(f"/dev/shm/ghostfabric/{job_id}")
+        if job_dir.exists():
+            shutil.rmtree(job_dir, ignore_errors=True)

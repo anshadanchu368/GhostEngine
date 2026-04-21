@@ -71,16 +71,15 @@ class MeshGenerator:
                 config_name=_TRIPOSR_CONFIG,
                 weight_name=_TRIPOSR_WEIGHTS,
             )
-            model.half()
             model.to("cuda")
             model.eval()
 
-            image = Image.open(image_path).convert("RGBA")
+            image = Image.open(image_path).convert("RGB")
 
             with torch.no_grad():
                 scene_codes = model([image], device="cuda")
 
-            meshes = model.extract_mesh(scene_codes, resolution=_MESH_RESOLUTION)
+            meshes = model.extract_mesh(scene_codes, resolution=_MESH_RESOLUTION, has_vertex_color=False)
             mesh = meshes[0]
 
             output_path = file_io.get_output_path(job_id, "output.glb")
