@@ -40,14 +40,12 @@ class PipelineRunner:
 
         elapsed_ms = int((time.monotonic() - start) * 1000)
         logger.info("Pipeline complete", extra={"job_id": job_id, "duration_ms": elapsed_ms})
-        result = {
+        return {
             "job_id": job_id,
             "status": "completed",
             "glb_path": str(glb_path),
             "duration_ms": elapsed_ms,
         }
-        self._cleanup(job_id)
-        return result
 
     def _error_result(self, job_id: str, status: str, exc: Exception, start: float) -> dict:
         elapsed_ms = int((time.monotonic() - start) * 1000)

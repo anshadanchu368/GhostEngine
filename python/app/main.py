@@ -1,9 +1,10 @@
 import logging
+import shutil
 import uuid
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, UploadFile, File
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 
 from app.pipeline.runner import PipelineRunner
 from app.utils import file_io, vram
@@ -48,7 +49,13 @@ async def process_image(image: UploadFile = File(...)) -> JSONResponse:
 
     result = _runner.run(job_id, image_path)
 
-    return JSONResponse(content=result, status_code=200)
+    if result["status"] != "completed":
+        return JSONResponse(content=result, status_code=200)
+
+    glb_path = Path(result["glb_path"])
+    glb_bytes = glb_path.read_bytes()
+    shutil.rmtree(glb_path.parent, ignore_errors=True)
+    return Response(content=glb_bytes, media_type="model/gltf-binary")
 
 
 @app.get("/health")

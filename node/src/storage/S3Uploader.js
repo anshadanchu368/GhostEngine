@@ -1,6 +1,4 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import { createReadStream } from 'fs';
-import { basename } from 'path';
 import logger from '../logger.js';
 
 const AWS_REGION = process.env.AWS_REGION ?? 'us-east-1';
@@ -13,14 +11,13 @@ if (!BUCKET_NAME) {
 const s3Client = new S3Client({ region: AWS_REGION });
 
 export class S3Uploader {
-  async upload(localPath, jobId) {
-    const key = `jobs/${jobId}/${basename(localPath)}`;
-    const fileStream = createReadStream(localPath);
+  async upload(glbBuffer, jobId) {
+    const key = `jobs/${jobId}/output.glb`;
 
     const command = new PutObjectCommand({
       Bucket: BUCKET_NAME,
       Key: key,
-      Body: fileStream,
+      Body: glbBuffer,
       ContentType: 'model/gltf-binary',
     });
 

@@ -53,7 +53,7 @@ app.post('/jobs', upload.single('image'), async (req, res) => {
 
           if (result.status === 'completed') {
             broadcaster.broadcast(jobId, 'uploading', 85);
-            const glbUrl = await s3Uploader.upload(result.glb_path, jobId);
+            const glbUrl = await s3Uploader.upload(result.glb_buffer, jobId);
             broadcaster.broadcast(jobId, 'completed', 100, glbUrl);
             logger.info({ job_id: jobId, glb_url: glbUrl }, 'Job completed');
           } else {

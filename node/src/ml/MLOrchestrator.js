@@ -30,8 +30,13 @@ async function callPythonProcess(imagePath) {
     throw new Error(`Python service error ${response.status}: ${truncated}`);
   }
 
-  const result = await response.json();
+  const contentType = response.headers.get('content-type') ?? '';
+  if (contentType.includes('model/gltf-binary')) {
+    const buffer = await response.buffer();
+    return { status: 'completed', glb_buffer: buffer };
+  }
 
+  const result = await response.json();
   if (typeof result.status === 'string' && result.status.startsWith('failed:')) {
     throw new Error(`Pipeline failure [${result.status}]: ${result.error ?? 'unknown'}`);
   }
