@@ -31,6 +31,7 @@ fi
 # Install torchmcubes (requires CUDA headers — must compile on GPU machine, not in CI)
 if ! python3 -c "import torchmcubes" 2>/dev/null; then
     echo "Installing torchmcubes..."
+    apt-get install -y python3.10-dev 2>/dev/null || true
     pip3 install git+https://github.com/tatsy/torchmcubes.git
 fi
 
