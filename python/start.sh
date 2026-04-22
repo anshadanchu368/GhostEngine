@@ -6,16 +6,24 @@ BRANCH=${GITHUB_BRANCH:-"main"}
 
 echo "Pulling latest code from $REPO_URL ($BRANCH)..."
 
-if [ -d "/app/repo/.git" ]; then
-    cd /app/repo && git pull origin "$BRANCH" && cp -r python/app/. /app/app/
-else
-    cd /app && git clone --branch "$BRANCH" "$REPO_URL" repo && cp -r repo/python/app ./app
-fi
+for i in 1 2 3 4 5; do
+    if [ -d "/app/repo/.git" ]; then
+        cd /app/repo && git pull origin "$BRANCH" && cp -r python/app/. /app/app/ && break
+    else
+        cd /app && git clone --branch "$BRANCH" "$REPO_URL" repo && cp -r repo/python/app ./app && break
+    fi
+    echo "Git failed (attempt $i/5), retrying in 10s..."
+    sleep 10
+done
 
 # Install TripoSR module (not pip-installable; clone and copy tsr/ package)
 if [ ! -d "/app/tsr" ]; then
     echo "Cloning TripoSR..."
-    git clone --depth 1 https://github.com/VAST-AI-Research/TripoSR.git /tmp/triposr
+    for i in 1 2 3 4 5; do
+        git clone --depth 1 https://github.com/VAST-AI-Research/TripoSR.git /tmp/triposr && break
+        echo "TripoSR clone failed (attempt $i/5), retrying in 10s..."
+        sleep 10
+    done
     cp -r /tmp/triposr/tsr /app/tsr
     rm -rf /tmp/triposr
 fi
